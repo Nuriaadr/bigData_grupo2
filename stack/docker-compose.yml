@@ -1,0 +1,48 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongo
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  jupyter:
+    image: quay.io/jupyter/datascience-notebook:latest
+    container_name: jupyter
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    environment:
+      JUPYTER_TOKEN: jupyter
+    volumes:
+      - ./notebooks:/home/jovyan/work
+
+volumes:
+  mongo_data:
+  redis_data:
