@@ -11,18 +11,6 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  mongo-express:
-    image: mongo-express:latest
-    container_name: mongo-express
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH: "false"
-    depends_on:
-      - mongo
-
   redis:
     image: redis:7
     container_name: redis
