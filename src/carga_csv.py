@@ -1,6 +1,11 @@
+
+from pathlib import Path
 import pandas as pd
 
-url = "\data\admisiones_historico.csv"
+BASE = Path(__file__).resolve().parent.parent 
+url = BASE / "data" / "admisiones_historico.csv"
+salida = BASE / "data" / "admisiones_limpio.csv"
+log = []
 
 df = pd.read_csv(url, delimiter=",", encoding="utf-8")
 
@@ -62,15 +67,6 @@ df["pa_revisar"] = df["pa_sistolica"] <= df["pa_diastolica"]
 log.append(("TA con sistólica <= diastólica (marcadas)", int(df["pa_revisar"].sum())))
 df = df.drop(columns="tension_arterial")
 
-#separa la tensión arterial, que viene como un único texto (150/88),
-#en dos columnas numéricas:sistólica (la alta) y diastólica (la baja).
-#Además marca los valores sospechosos.
-ta = df["tension_arterial"].str.extract(r"^(\d{2,3})\s*[/_\- ]\s*(\d{2,3})$").astype(float)
-df["pa_sistolica"], df["pa_diastolica"] = ta[0], ta[1]
-df["pa_revisar"] = df["pa_sistolica"] <= df["pa_diastolica"]
-log.append(("TA con sistólica <= diastólica (marcadas)", int(df["pa_revisar"].sum())))
-df = df.drop(columns="tension_arterial")
-
 #unifica las distintas formas de escribir el destino del paciente al alta,
 #de modo que cada destino quede representado por un único valor.
 df["destino_alta"] = (df["destino_alta"].str.lower()
@@ -88,7 +84,7 @@ cols = ["id_episodio", "sip_paciente", "timestamp_llegada", "timestamp_alta",
         "duracion_horas", "motivo_consulta", "frecuencia_cardiaca",
         "pa_sistolica", "pa_diastolica", "pa_revisar", "destino_alta"]
 df = df[cols]
-df.to_csv(url, index=False, date_format="%Y-%m-%d %H:%M:%S")
+df.to_csv(salida, index=False, date_format="%Y-%m-%d %H:%M:%S")
 log.append(("Filas finales", len(df)))
 
 print("\n=== RESUMEN DE LA LIMPIEZA ===")
