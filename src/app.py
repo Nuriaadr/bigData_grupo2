@@ -1,3 +1,3 @@
-from conexion_mongo import bd_grupo2
+from conexion_mongo import coleccion_admisiones
 
-bd_grupo2.insert_one({})
+coleccion_admisiones.insert_one({})
