@@ -1,23 +1,17 @@
 """
 Consultas de agregación sobre la colección de admisiones.
 
-Este script NO crea ninguna conexión: todas las funciones reciben la colección
-de PyMongo (`coll`) ya conectada desde tu otro script.
+Usa la colección `coleccion_admisiones` definida en conexion_mongo.py
+(ia_bigdata_db.admisiones), por lo que ambos archivos deben estar en la
+misma carpeta.
 
-Ejemplo de uso desde tu script de conexión (ajusta los nombres):
+Antes de ejecutar las consultas, carga los datos una vez:
+    python conexion_mongo.py
 
-    from tu_script_conexion import coll          # o la función/objeto que uses
-    from consultas_urgencias_sin_conexion import (
-        estancia_media_por_categoria,
-        destino_alta_por_edad,
-    )
-
-    for doc in estancia_media_por_categoria(coll):
-        print(doc)
-
-    for doc in destino_alta_por_edad(coll):
-        print(doc)
+Ejecución:
+    python consultas_urgencias_conectado.py
 """
+from conexion_mongo import coleccion_admisiones
 
 # ---------------------------------------------------------------------------
 # CONSULTA 1: tiempo medio de estancia (minutos) por categoría patológica
@@ -44,7 +38,7 @@ PIPELINE_ESTANCIA_MEDIA = [
 ]
 
 
-def estancia_media_por_categoria(coll):
+def estancia_media_por_categoria(coll=coleccion_admisiones):
     """Devuelve una lista de dicts con la estancia media (min) por categoría."""
     return list(coll.aggregate(PIPELINE_ESTANCIA_MEDIA))
 
@@ -98,6 +92,15 @@ PIPELINE_DESTINO_POR_EDAD = [
 ]
 
 
-def destino_alta_por_edad(coll):
+def destino_alta_por_edad(coll=coleccion_admisiones):
     """Devuelve una lista de dicts con el % de domicilio/ingreso_planta por grupo de edad."""
     return list(coll.aggregate(PIPELINE_DESTINO_POR_EDAD))
+
+if __name__ == "__main__":
+    print("\n== Estancia media por categoría patológica (min) ==")
+    for doc in estancia_media_por_categoria():
+        print(doc)
+
+    print("\n== Destino al alta por grupo de edad (%) ==")
+    for doc in destino_alta_por_edad():
+        print(doc)
