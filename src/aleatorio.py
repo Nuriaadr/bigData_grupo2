@@ -1,4 +1,4 @@
-from conexion_mongo import coleccion_admisiones
+from conexion_mongo import coleccion_episodios
 from pprint import pprint
 
-pprint(next(coleccion_admisiones.aggregate([{"$sample": {"size": 1}}])))
+pprint(next(coleccion_episodios.aggregate([{"$sample": {"size": 1}}])))
