@@ -1,17 +1,10 @@
 """
-Consultas de agregación sobre la colección de admisiones.
+Consultas de agregación sobre la colección de admisiones con partes clinicos del historico.
 
-Usa la colección `coleccion_admisiones` definida en conexion_mongo.py
-(ia_bigdata_db.admisiones), por lo que ambos archivos deben estar en la
-misma carpeta.
+Usa la colección `coleccion_episodios` definida en conexion_mongo.py
 
-Antes de ejecutar las consultas, carga los datos una vez:
-    python conexion_mongo.py
-
-Ejecución:
-    python consultas_urgencias_conectado.py
 """
-from conexion_mongo import coleccion_admisiones
+from conexion_mongo import coleccion_episodios
 
 # ---------------------------------------------------------------------------
 # CONSULTA 1: tiempo medio de estancia (minutos) por categoría patológica
@@ -38,7 +31,7 @@ PIPELINE_ESTANCIA_MEDIA = [
 ]
 
 
-def estancia_media_por_categoria(coll=coleccion_admisiones):
+def estancia_media_por_categoria(coll=coleccion_episodios):
     """Devuelve una lista de dicts con la estancia media (min) por categoría."""
     return list(coll.aggregate(PIPELINE_ESTANCIA_MEDIA))
 
@@ -92,7 +85,7 @@ PIPELINE_DESTINO_POR_EDAD = [
 ]
 
 
-def destino_alta_por_edad(coll=coleccion_admisiones):
+def destino_alta_por_edad(coll=coleccion_episodios):
     """Devuelve una lista de dicts con el % de domicilio/ingreso_planta por grupo de edad."""
     return list(coll.aggregate(PIPELINE_DESTINO_POR_EDAD))
 

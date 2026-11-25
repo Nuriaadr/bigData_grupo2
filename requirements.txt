@@ -1,4 +1,5 @@
+pandas
 pymongo
 redis
 python-dotenv
-dotenv
+requests

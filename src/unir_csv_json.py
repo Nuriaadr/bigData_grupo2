@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Une un CSV de admisiones con un JSON de partes clínicos por 'id_episodio'
-y guarda el resultado en un nuevo JSON, conservando la estructura anidada.
+y guarda el resultado en un nuevo JSON, conservando la estructura anidada dentro de la carpeta data/.
 
 Uso:
     Coloca este script en la misma carpeta que los dos archivos y ejecuta:
@@ -12,8 +12,15 @@ Requisitos:
 """
 
 import json
-
+from pathlib import Path
 import pandas as pd
+
+#rutas para los archivos de entrada y salida
+BASE = Path(__file__).resolve().parent.parent
+DATA = BASE / "data"
+ruta_csv = DATA / "admisiones_limpio.csv"
+ruta_json = DATA /"partes_clinicos.json"
+ruta_salida = DATA / "admisiones_con_partes_clinicos.json"
 
 # Columna que existe en ambos archivos y sirve para unirlos
 CLAVE = "id_episodio"
@@ -24,9 +31,7 @@ COLUMNAS_REPETIDAS = (CLAVE, "sip_paciente")
 # Columnas del CSV que son enteros, pero pandas lee como float por los vacíos
 COLUMNAS_ENTERAS = ["frecuencia_cardiaca", "pa_sistolica", "pa_diastolica"]
 
-ruta_csv = "./admisiones_limpio.csv"
-ruta_json = "../data/partes_clinicos.json"
-ruta_salida = "../data/admisiones_con_partes_clinicos.json"
+
 
 def limpia(valor, columna):
     """Convierte un valor del CSV a un tipo que JSON pueda escribir."""
@@ -39,7 +44,8 @@ def limpia(valor, columna):
     return valor
 
 
-def unir(ruta_csv, ruta_json, ruta_salida):
+
+def unir(ruta_csv=ruta_csv, ruta_json=ruta_json, ruta_salida=ruta_salida):
     # 1. Cargar los datos
     df = pd.read_csv(ruta_csv)
 
@@ -64,9 +70,12 @@ def unir(ruta_csv, ruta_json, ruta_salida):
     with open(ruta_salida, "w", encoding="utf-8") as f:
         json.dump(resultado, f, ensure_ascii=False, indent=2)
 
+    print (f"Unión terminada: {len(resultado)} admisiones")
+    print(f"Archivo generado: {ruta_salida}")
 
-unir(
-    "admisiones_limpio.csv",
-    "partes_clinicos.json",
-    "admisiones_con_partes_clinicos.json",
-)
+    return resultado
+
+if __name__ == "__main__":
+    unir()
+
+

@@ -2,7 +2,7 @@
   python-app:
     build:
       context: ..
-      dockerfile: stack/Dockerfile
+      dockerfile: Docker/Dockerfile
     container_name: python-app
     restart: unless-stopped
     ports:
@@ -11,7 +11,10 @@
       - mongo
       - redis
     volumes:
-      - ..:/app
+      - ../:/app
+      
+    working_dir: /app/src
+    command: ["sleep", "infinity"]
 
   mongo:
     image: mongo:7
