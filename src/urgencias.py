@@ -131,15 +131,17 @@ def intentar_asignar_pendientes():
 
 
 def procesar_alta(alta):
-    #Guarda el episodio con el alta en MongoDB y libera los reursos en Redis
+    #Guarda el episodio con el alta en MongoDB y libera los recursos en Redis
     id_episodio = str(alta["id_episodio"])
 
     documento = r.get(f"paciente:{id_episodio}")
 
     if documento is None:
-        raise RuntimeError(
-            f"No se puede procesar la alta del episodio {id_episodio}: su ingreso no está registrado en Redis"
+        print(
+            f"[AVISO] Alta recibida del episodio {id_episodio}, "
+            "pero no está registrado en Redis. Se ignora el alta."
         )
+        return
 
     paciente = json.loads(documento)
 
@@ -149,6 +151,7 @@ def procesar_alta(alta):
         "fecha_hora_alta": alta["fecha_hora_alta"],
         "destino_alta": alta["destino_alta"]
     }
+
     #Primero se guarda en MongoDB
     #Si falla, no se elimina el paciente de Redis
     coleccion_episodios.insert_one(documento_mongo)
@@ -156,7 +159,8 @@ def procesar_alta(alta):
     box_liberado = None
 
     for i in range(1, NUM_BOXES + 1):
-        ocupante= r.hget(f"box:{i}", "id_episodio")
+        ocupante = r.hget(f"box:{i}", "id_episodio")
+
         if ocupante == id_episodio:
             box_liberado = i
             break
