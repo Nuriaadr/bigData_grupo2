@@ -58,7 +58,7 @@ def menu_historico():
         opcion = input("\nSelecciona una opción: ").strip()
 
         if opcion == "1":
-            ejecutar_script("consultas_mongo.py")
+            ejecutar_script("consultas_generales.py")
 
         elif opcion == "2":
             return
